@@ -2,8 +2,11 @@ package com.example.myappp;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
@@ -14,11 +17,16 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class HabitListActivity extends AppCompatActivity {
 
+    private LinearLayout habitListContainer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_habit_list);
+
+        habitListContainer = findViewById(R.id.habit_list_container);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -39,10 +47,10 @@ public class HabitListActivity extends AppCompatActivity {
                 .setPositiveButton("Добавить", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        System.out.println(input.getText().toString());//надо вызвать метод, который будет выводить эти привычки (надо добавить vertical liner в xml
-                        System.out.println('1');
-                        finish();
-
+                        String habitText = input.getText().toString().trim();
+                        if (!habitText.isEmpty()) {
+                            addHabitToScreen(habitText);
+                        }
                     }
                 })
                 .setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
@@ -53,6 +61,22 @@ public class HabitListActivity extends AppCompatActivity {
                 });
         AlertDialog dialog=builder.create();
         dialog.show();
+    }
+
+    private void addHabitToScreen(String habitText) {
+        LayoutInflater inflater = LayoutInflater.from(this);
+
+        View habitView = inflater.inflate(R.layout.habit_item, habitListContainer, false);
+        //View inflate(идентификатор элемента, который хотим преобр в View, родит контейнер в кот добавляется созданный View, автомат добавл в контейнер или нет)
+
+        TextView habitTextView = habitView.findViewById(R.id.habit_text);
+        // ищем элемент TextView внутри созданного View (habitView), используя его идентификатор (R.id.habit_text).
+
+        habitTextView.setText(habitText);
+        //устанавливаем текст для найденного TextView
+
+        habitListContainer.addView(habitView);
+        // созданный элемент привычки (habitView) добавляется в родит контейнер (habitListContainer)
     }
 
 }

@@ -3,4 +3,7 @@
     <string name="mark_habit">Отметить привычку</string>
     <string name="plus_button">Добавить новую привычку</string>
     <string name="habits">Ваши привычки</string>
+    <string name="user_name">Введите имя пользователя</string>
+    <string name="register">Начать</string>
+    <string name="log_in">Войти</string>
 </resources>
