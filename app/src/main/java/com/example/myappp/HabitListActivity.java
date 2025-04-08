@@ -15,15 +15,25 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.util.List;
+
+import db.Habit;
+import db.HabitDao;
+import db.HabitDataBase;
+
 public class HabitListActivity extends AppCompatActivity {
 
     private LinearLayout habitListContainer;
+    private HabitDataBase habitDatabase;
+    private HabitDao habitDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_habit_list);
+        habitDatabase = HabitDataBase.getInstance(this);
+        habitDao = habitDatabase.habitDao();
 
         habitListContainer = findViewById(R.id.habit_list_container);
 
@@ -32,8 +42,9 @@ public class HabitListActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
+        loadHabits();
     }
+
     public void plusClick(View v){
         newHabit();
     }
@@ -49,7 +60,11 @@ public class HabitListActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         String habitText = input.getText().toString().trim();
                         if (!habitText.isEmpty()) {
-                            addHabitToScreen(habitText);
+                            Habit newHabit = new Habit(habitText);
+                            new Thread(() -> {
+                                habitDao.insertHabit(newHabit);
+                                runOnUiThread(() -> addHabitToScreen(habitText)); // Обновление экрана
+                            }).start();
                         }
                     }
                 })
@@ -67,16 +82,22 @@ public class HabitListActivity extends AppCompatActivity {
         LayoutInflater inflater = LayoutInflater.from(this);
 
         View habitView = inflater.inflate(R.layout.habit_item, habitListContainer, false);
-        //View inflate(идентификатор элемента, который хотим преобр в View, родит контейнер в кот добавляется созданный View, автомат добавл в контейнер или нет)
 
         TextView habitTextView = habitView.findViewById(R.id.habit_text);
-        // ищем элемент TextView внутри созданного View (habitView), используя его идентификатор (R.id.habit_text).
 
         habitTextView.setText(habitText);
-        //устанавливаем текст для найденного TextView
 
         habitListContainer.addView(habitView);
-        // созданный элемент привычки (habitView) добавляется в родит контейнер (habitListContainer)
+    }
+    private void loadHabits() {
+        new Thread(() -> {
+            List<Habit> habits = habitDao.getAllHabits();
+            runOnUiThread(() -> {
+                for (Habit habit : habits) {
+                    addHabitToScreen(habit.getName());
+                }
+            });
+        }).start();
     }
 
 }

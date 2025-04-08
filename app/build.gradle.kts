@@ -32,7 +32,9 @@ android {
 }
 
 dependencies {
-
+    val roomVersion = "2.5.0" // Убедитесь, что используете последнюю версию
+    implementation("androidx.room:room-runtime:$roomVersion")
+    annotationProcessor("androidx.room:room-compiler:$roomVersion") // Для Java
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
