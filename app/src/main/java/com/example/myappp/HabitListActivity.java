@@ -1,10 +1,12 @@
 package com.example.myappp;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -36,6 +38,13 @@ public class HabitListActivity extends AppCompatActivity {
         habitDao = habitDatabase.habitDao();
 
         habitListContainer = findViewById(R.id.habit_list_container);
+
+        ImageButton calendarButton = findViewById(R.id.calendar_button);
+
+        calendarButton.setOnClickListener(v -> {
+            Intent intent = new Intent(HabitListActivity.this, CalendarActivity.class);
+            startActivity(intent);
+        });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
