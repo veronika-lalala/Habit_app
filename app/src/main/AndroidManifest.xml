@@ -10,7 +10,7 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/frog"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Myappp"
+        android:theme="@style/Base.Theme.Myappp"
         tools:targetApi="31">
 
         <activity
@@ -29,7 +29,8 @@
         <activity
             android:name=".RegistrationActivity"
             android:exported="false" />
-        <activity android:name=".CalendarActivity" />
+        <activity android:name=".CalendarActivity"
+            android:exported="false" />
 
     </application>
 
