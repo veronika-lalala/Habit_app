@@ -1,11 +1,11 @@
-package com.example.myappp;
+package activity;
 
 import android.os.Bundle;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
-import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
-import java.util.Objects;
+import com.example.myappp.R;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
 public class CalendarActivity extends AppCompatActivity {
 
