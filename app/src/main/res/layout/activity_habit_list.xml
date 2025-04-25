@@ -52,16 +52,22 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/habit_list_container"
+    <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:orientation="vertical"
-        android:padding="16dp"
+        android:fillViewport="true"
         app:layout_constraintBottom_toTopOf="@id/plus_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView" />
+        app:layout_constraintTop_toBottomOf="@id/textView">
+
+        <LinearLayout
+            android:id="@+id/habit_list_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp" />
+    </ScrollView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

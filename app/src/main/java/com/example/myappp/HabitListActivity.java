@@ -58,11 +58,11 @@ public class HabitListActivity extends AppCompatActivity {
         loadHabits();
     }
 
-    public void plusClick(View v){
+    public void plusClick(View v) {
         newHabit();
     }
 
-    private void newHabit(){
+    private void newHabit() {
         final EditText input = new EditText(HabitListActivity.this);
         AlertDialog.Builder builder = new AlertDialog.Builder(HabitListActivity.this);
         builder.setTitle("Добавление привычки")
@@ -74,13 +74,14 @@ public class HabitListActivity extends AppCompatActivity {
                     if (!habitText.isEmpty()) {
                         Habit newHabit = new Habit(habitText);
                         new Thread(() -> {
-                            habitDao.insertHabit(newHabit);
+                            long id = habitDao.insertHabit(newHabit);
+                            newHabit.setId(id);
                             runOnUiThread(() -> addHabitToScreen(newHabit));
                         }).start();
                     }
                 })
                 .setNegativeButton("Отмена", (dialog, which) -> dialog.cancel());
-        AlertDialog dialog=builder.create();
+        AlertDialog dialog = builder.create();
         dialog.show();
     }
 
