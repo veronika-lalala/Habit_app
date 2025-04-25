@@ -1,11 +1,48 @@
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/habit_text"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:textSize="20sp"
-    android:padding="16dp"
-    android:layout_marginBottom="5dp"
-    android:background="@drawable/rounded_background"
-    android:textColor="#000000"
-    android:gravity="center_vertical"
-    />
+    android:orientation="horizontal"
+    android:padding="4dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_background"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp">
+
+        <ImageButton
+            android:id="@+id/actions_button"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="12dp"
+            android:src="@drawable/ic_menu"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Действия" />
+
+        <TextView
+            android:id="@+id/habit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@+id/habit_checkbox"
+            android:layout_toEndOf="@+id/actions_button"
+            android:layout_centerVertical="true"
+            android:gravity="center_vertical"
+            android:minHeight="32dp"
+            android:textColor="#000000"
+            android:textSize="16sp" />
+
+        <CheckBox
+            android:id="@+id/habit_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp"
+            android:scaleX="0.8"
+            android:scaleY="0.8" />
+    </RelativeLayout>
+</LinearLayout>
