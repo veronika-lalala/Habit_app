@@ -1,15 +1,12 @@
-package com.example.myappp;
+package activity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -20,6 +17,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.example.myappp.R;
 
 import java.util.List;
 
@@ -58,11 +57,11 @@ public class HabitListActivity extends AppCompatActivity {
         loadHabits();
     }
 
-    public void plusClick(View v){
+    public void plusClick(View v) {
         newHabit();
     }
 
-    private void newHabit(){
+    private void newHabit() {
         final EditText input = new EditText(HabitListActivity.this);
         AlertDialog.Builder builder = new AlertDialog.Builder(HabitListActivity.this);
         builder.setTitle("Добавление привычки")
@@ -74,13 +73,14 @@ public class HabitListActivity extends AppCompatActivity {
                     if (!habitText.isEmpty()) {
                         Habit newHabit = new Habit(habitText);
                         new Thread(() -> {
-                            habitDao.insertHabit(newHabit);
+                            long id = habitDao.insertHabit(newHabit);
+                            newHabit.setId(id);
                             runOnUiThread(() -> addHabitToScreen(newHabit));
                         }).start();
                     }
                 })
                 .setNegativeButton("Отмена", (dialog, which) -> dialog.cancel());
-        AlertDialog dialog=builder.create();
+        AlertDialog dialog = builder.create();
         dialog.show();
     }
 
