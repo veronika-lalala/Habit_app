@@ -2,6 +2,7 @@ package activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
@@ -45,6 +46,7 @@ public class HabitListActivity extends AppCompatActivity {
         habitDatabase = HabitDataBase.getInstance(this);
         habitDao = habitDatabase.habitDao();
         dayHabitDao = habitDatabase.dayHabitDao();
+        Log.d("DB", "Таблица day_habits создана");
 
         habitListContainer = findViewById(R.id.habit_list_container);
 
@@ -76,6 +78,7 @@ public class HabitListActivity extends AppCompatActivity {
                 .setView(input)
                 .setPositiveButton("Добавить", (dialog, which) -> {
                     String habitText = input.getText().toString().trim();
+                    Log.d("LA","добавлена новая привычка");
                     if (!habitText.isEmpty()) {
                         Habit newHabit = new Habit(habitText);
                         new Thread(() -> {
@@ -116,9 +119,9 @@ public class HabitListActivity extends AppCompatActivity {
 
                     if (isChecked) {
                         // Проверяем, нет ли уже записи для этой привычки сегодня
-                        if (dayHabitDao.getByHabitAndDate(habit.getId(), currentDate) == null) {
-                            DayHabit dayHabit = new DayHabit(habit.getId(), currentDate);
-                            dayHabitDao.insert(dayHabit);
+                        if (dayHabitDao.getByHabitAndDate(currentDate,habit.getId()) == null) {
+                            DayHabit dayHabit = new DayHabit(currentDate,habit.getId());
+                            dayHabitDao.insertWithLogging(dayHabit);
                         }
                     } else {
                         // Удаляем запись из календаря

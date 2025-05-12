@@ -1,6 +1,7 @@
 package activity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -22,6 +23,7 @@ public class CalendarActivity extends AppCompatActivity {
     private DayHabitDao dayHabitDao;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("CL","Calendar activity create");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
         dayHabitDao = HabitDataBase.getInstance(this).dayHabitDao();
@@ -33,20 +35,25 @@ public class CalendarActivity extends AppCompatActivity {
             selectedDateTextView.setText(selectedDate);
         });
         loadCompletedDates();
+        materialCalendarView.invalidateDecorators();
+        //loadCompletedDates();
     }
     private void loadCompletedDates() {
         new Thread(() -> {
             try {
+                Log.d("CL","loading");
                 List<Long> completedDates = dayHabitDao.getAllCompletedDates();
+                Log.d("CL","получили даты");
                 runOnUiThread(() -> {
                     materialCalendarView.removeDecorators();  // Удаляем старые декораторы
                     materialCalendarView.addDecorator(
                             new CompletedDaysDecorator(this, completedDates)
                     );
+                    materialCalendarView.invalidateDecorators();
                 });
             } catch (Exception e) {
                 e.printStackTrace();
-                // Можно добавить Toast или Log.e()
+
             }
         }).start();
     }
