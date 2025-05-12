@@ -5,18 +5,26 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myappp.R;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import db.DayHabit;
+import db.DayHabitDao;
+import db.HabitDataBase;
 
 public class CalendarActivity extends AppCompatActivity {
 
     private TextView selectedDateTextView;
     private MaterialCalendarView materialCalendarView;
-
+    private DayHabitDao dayHabitDao;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
-
+        dayHabitDao = HabitDataBase.getInstance(this).dayHabitDao();
         selectedDateTextView = findViewById(R.id.selectedDateTextView);
         materialCalendarView = findViewById(R.id.materialCalendarView);
 
@@ -24,5 +32,23 @@ public class CalendarActivity extends AppCompatActivity {
             String selectedDate = "Выбранная дата: " + date.getDay() + "/" + (date.getMonth() + 1) + "/" + date.getYear();
             selectedDateTextView.setText(selectedDate);
         });
+        loadCompletedDates();
     }
+    private void loadCompletedDates() {
+        new Thread(() -> {
+            try {
+                List<Long> completedDates = dayHabitDao.getAllCompletedDates();
+                runOnUiThread(() -> {
+                    materialCalendarView.removeDecorators();  // Удаляем старые декораторы
+                    materialCalendarView.addDecorator(
+                            new CompletedDaysDecorator(this, completedDates)
+                    );
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                // Можно добавить Toast или Log.e()
+            }
+        }).start();
+    }
+
 }
