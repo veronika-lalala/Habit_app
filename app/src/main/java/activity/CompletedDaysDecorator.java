@@ -3,6 +3,7 @@ package activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import androidx.core.content.ContextCompat;
@@ -42,7 +43,7 @@ public class CompletedDaysDecorator implements DayViewDecorator {
     @Override
     public void decorate(DayViewFacade view) {
         Log.d("Decorator", "Applying decoration");
-        int color = ContextCompat.getColor(context,R.color.pink);
-        view.setBackgroundDrawable(new ColorDrawable(color));
+        Drawable circle = ContextCompat.getDrawable(context, R.drawable.circle);
+        view.setBackgroundDrawable(circle);
     }
 }

@@ -35,13 +35,14 @@ public class CalendarActivity extends AppCompatActivity {
         dayHabitDao = HabitDataBase.getInstance(this).dayHabitDao();
 
 
-        selectedDateTextView = findViewById(R.id.selectedDateTextView);
+//        selectedDateTextView = findViewById(R.id.selectedDateTextView);
         materialCalendarView = findViewById(R.id.materialCalendarView);
+        materialCalendarView.setSelectionMode(MaterialCalendarView.SELECTION_MODE_NONE);
 
-        materialCalendarView.setOnDateChangedListener((widget, date, selected) -> {
-            String selectedDate = "Выбранная дата: " + date.getDay() + "/" + (date.getMonth() + 1) + "/" + date.getYear();
-            selectedDateTextView.setText(selectedDate);
-        });
+//        materialCalendarView.setOnDateChangedListener((widget, date, selected) -> {
+//            String selectedDate = "Выбранная дата: " + date.getDay() + "/" + (date.getMonth() + 1) + "/" + date.getYear();
+//            selectedDateTextView.setText(selectedDate);
+//        });
         loadCompletedDates();
     }
     private void loadCompletedDates() {

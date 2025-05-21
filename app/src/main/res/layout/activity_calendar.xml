@@ -5,13 +5,13 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <TextView
-        android:id="@+id/selectedDateTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingBottom="16dp"
-        android:text="Выберите дату"
-        android:textSize="18sp" />
+<!--    <TextView-->
+<!--        android:id="@+id/selectedDateTextView"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:paddingBottom="16dp"-->
+<!--        android:text="Выберите дату"-->
+<!--        android:textSize="18sp" />-->
 
     <com.prolificinteractive.materialcalendarview.MaterialCalendarView
         android:id="@+id/materialCalendarView"
@@ -20,6 +20,7 @@
         app:mcv_headerTextAppearance="@color/white"
         app:mcv_selectionColor="@color/green"
         app:mcv_weekDayTextAppearance="@color/white"
+        app:mcv_selectionMode="none"
         />
 
 </LinearLayout>

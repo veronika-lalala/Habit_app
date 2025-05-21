@@ -1,6 +1,7 @@
 package activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,7 +21,6 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.myappp.R;
-import com.prolificinteractive.materialcalendarview.CalendarDay;
 
 import java.util.Calendar;
 import java.util.List;
@@ -37,6 +37,9 @@ public class HabitListActivity extends AppCompatActivity {
     private HabitDataBase habitDatabase;
     private DayHabitDao dayHabitDao;
     private HabitDao habitDao;
+    private static final String PREFS_NAME = "HabitPrefs";
+    private static final String LAST_OPENED_DATE = "lastOpenedDate";
+    private long currentDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +65,33 @@ public class HabitListActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        loadHabits();
+        currentDate = getCurrentDateAsLong();
+        checkDateAndLoadHabits();
+    }
+
+    private void checkDateAndLoadHabits() {
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        long lastOpenedDate = prefs.getLong(LAST_OPENED_DATE, 0);
+
+        if (lastOpenedDate != currentDate) {
+            new Thread(() -> {
+                habitDao.resetAllHabitsCompletion();
+                prefs.edit().putLong(LAST_OPENED_DATE, currentDate).apply();
+                runOnUiThread(this::loadHabits);
+            }).start();
+        } else {
+            loadHabits();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        long newDate = getCurrentDateAsLong();
+        if (newDate != currentDate) {
+            currentDate = newDate;
+            checkDateAndLoadHabits();
+        }
     }
 
     public void plusClick(View v) {
@@ -104,34 +133,26 @@ public class HabitListActivity extends AppCompatActivity {
         habitTextView.setText(habit.getName());
         habitCheckbox.setChecked(habit.getIs_completed());
 
-        // Обработчик для чекбокса
         habitCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (buttonView.isPressed()) {
-                // Обновляем состояние в объекте
                 habit.setIs_completed(isChecked);
 
                 new Thread(() -> {
-                    // 1. Сохраняем состояние чекбокса в базу
                     habitDao.updateHabit(habit);
 
-                    // 2. Работаем с календарем
                     long currentDate = getCurrentDateAsLong();
 
                     if (isChecked) {
-                        // Проверяем, нет ли уже записи для этой привычки сегодня
                         if (dayHabitDao.getByHabitAndDate(currentDate,habit.getId()) == null) {
                             DayHabit dayHabit = new DayHabit(currentDate,habit.getId());
                             dayHabitDao.insertWithLogging(dayHabit);
                         }
                     } else {
-                        // Удаляем запись из календаря
                         dayHabitDao.deleteByHabitAndDate(habit.getId(), currentDate);
                     }
                 }).start();
             }
         });
-
-        // Обработчик для кнопки действий
         actionsButton.setOnClickListener(v -> {
             showActionsMenu(v, habit, habitView);
         });
@@ -195,6 +216,7 @@ public class HabitListActivity extends AppCompatActivity {
         new Thread(() -> {
             List<Habit> habits = habitDao.getAllHabits();
             runOnUiThread(() -> {
+                habitListContainer.removeAllViews();
                 for (Habit habit : habits) {
                     addHabitToScreen(habit);
                 }
