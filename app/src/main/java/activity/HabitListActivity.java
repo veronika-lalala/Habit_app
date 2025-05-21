@@ -2,6 +2,7 @@ package activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
@@ -19,9 +20,13 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.myappp.R;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
 
+import java.util.Calendar;
 import java.util.List;
 
+import db.DayHabit;
+import db.DayHabitDao;
 import db.Habit;
 import db.HabitDao;
 import db.HabitDataBase;
@@ -30,6 +35,7 @@ public class HabitListActivity extends AppCompatActivity {
 
     private LinearLayout habitListContainer;
     private HabitDataBase habitDatabase;
+    private DayHabitDao dayHabitDao;
     private HabitDao habitDao;
 
     @Override
@@ -39,6 +45,8 @@ public class HabitListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_habit_list);
         habitDatabase = HabitDataBase.getInstance(this);
         habitDao = habitDatabase.habitDao();
+        dayHabitDao = habitDatabase.dayHabitDao();
+        Log.d("DB", "Таблица day_habits создана");
 
         habitListContainer = findViewById(R.id.habit_list_container);
 
@@ -70,6 +78,7 @@ public class HabitListActivity extends AppCompatActivity {
                 .setView(input)
                 .setPositiveButton("Добавить", (dialog, which) -> {
                     String habitText = input.getText().toString().trim();
+                    Log.d("LA","добавлена новая привычка");
                     if (!habitText.isEmpty()) {
                         Habit newHabit = new Habit(habitText);
                         new Thread(() -> {
@@ -97,8 +106,29 @@ public class HabitListActivity extends AppCompatActivity {
 
         // Обработчик для чекбокса
         habitCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            habit.setIs_completed(isChecked);
-            new Thread(() -> habitDao.updateHabit(habit)).start();
+            if (buttonView.isPressed()) {
+                // Обновляем состояние в объекте
+                habit.setIs_completed(isChecked);
+
+                new Thread(() -> {
+                    // 1. Сохраняем состояние чекбокса в базу
+                    habitDao.updateHabit(habit);
+
+                    // 2. Работаем с календарем
+                    long currentDate = getCurrentDateAsLong();
+
+                    if (isChecked) {
+                        // Проверяем, нет ли уже записи для этой привычки сегодня
+                        if (dayHabitDao.getByHabitAndDate(currentDate,habit.getId()) == null) {
+                            DayHabit dayHabit = new DayHabit(currentDate,habit.getId());
+                            dayHabitDao.insertWithLogging(dayHabit);
+                        }
+                    } else {
+                        // Удаляем запись из календаря
+                        dayHabitDao.deleteByHabitAndDate(habit.getId(), currentDate);
+                    }
+                }).start();
+            }
         });
 
         // Обработчик для кнопки действий
@@ -171,4 +201,12 @@ public class HabitListActivity extends AppCompatActivity {
             });
         }).start();
     }
+    public static long getCurrentDateAsLong() {
+        Calendar calendar = Calendar.getInstance();
+        return calendar.get(Calendar.YEAR) * 10000L +
+                (calendar.get(Calendar.MONTH) + 1) * 100L +
+                calendar.get(Calendar.DAY_OF_MONTH);
+    }
+
+
 }

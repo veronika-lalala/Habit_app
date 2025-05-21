@@ -36,7 +36,6 @@ public class Habit {
     @ColumnInfo(name = HabitContract.Columns.ISCOMPLETED)
     private boolean is_completed;
 
-    //TODO добавить поле частоты(сколько раз в неделю выполнять) для этого нужно поменять всплывающее окно добавления привычки
     public Habit(String name){
         this.name=name;
         this.is_completed=false;

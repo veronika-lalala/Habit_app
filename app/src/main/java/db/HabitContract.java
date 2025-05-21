@@ -1,7 +1,7 @@
 package db;
 
 public class HabitContract{
-    public static final String TABLE_NAME = "users";
+    public static final String TABLE_NAME = "habits";
 
     public static class Columns {
         public static final String ID = "id";

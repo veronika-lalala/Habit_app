@@ -43,4 +43,6 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation("com.github.prolificinteractive:material-calendarview:2.0.1")
+    implementation ("androidx.lifecycle:lifecycle-livedata:2.6.2")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel:2.6.2")
 }
