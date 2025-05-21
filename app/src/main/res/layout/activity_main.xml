@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--ConstraintLayout позволяет расположить вложенные элементы в определенных местах экрана.-->
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -14,39 +12,68 @@
         android:id="@+id/textView_greeting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="60dp"
+        android:layout_marginTop="60dp"
         android:textColor="@color/green"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/myImageView"
         android:layout_width="190dp"
-        android:layout_height="263dp"
-        android:src="@drawable/frog"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="300dp"
+        android:src="@drawable/norm"
+        android:layout_marginBottom="0dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/progress_container"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.538"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.32" />
+        app:layout_constraintTop_toBottomOf="@id/textView_greeting" />
+
+    <FrameLayout
+        android:id="@+id/progress_container"
+        android:layout_width="280dp"
+        android:layout_height="60dp"
+        app:layout_constraintBottom_toTopOf="@id/button_open_habit_list_activity"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/myImageView"
+        >
+
+        <ProgressBar
+            android:id="@+id/progress_oval"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:max="100"
+            android:progress="0"
+            android:progressDrawable="@drawable/progress_capsule" />
+
+        <TextView
+            android:id="@+id/progress_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/zero_percent"
+            android:textColor="#000000"
+            android:textSize="25sp" />
+    </FrameLayout>
 
     <Button
         android:id="@+id/button_open_habit_list_activity"
         android:layout_width="244dp"
         android:layout_height="80dp"
+        android:layout_marginBottom="20dp"
         android:text="@string/mark_habit"
         android:textSize="20sp"
         app:backgroundTint="@color/green"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.923" />
-
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/progress_container" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

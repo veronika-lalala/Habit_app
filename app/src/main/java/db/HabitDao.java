@@ -21,4 +21,10 @@ public interface HabitDao {
 
     @Query("UPDATE " + HabitContract.TABLE_NAME + " SET " + HabitContract.Columns.ISCOMPLETED + " = 0")
     void resetAllHabitsCompletion();
+    @Query("SELECT COUNT(*) FROM habits")
+    int getTotalHabitsCount();
+
+    @Query("SELECT COUNT(*) FROM habits WHERE is_completed = 1 AND id IN " +
+            "(SELECT habit_id FROM day_habits WHERE date = :date)")
+    int getCompletedHabitsCountForDate(long date);
 }

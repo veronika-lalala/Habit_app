@@ -6,4 +6,5 @@
     <string name="user_name">Введите имя пользователя</string>
     <string name="register">Начать</string>
     <string name="log_in">Войти</string>
+    <string name="zero_percent">0%</string>
 </resources>

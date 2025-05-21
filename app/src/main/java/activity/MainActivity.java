@@ -3,6 +3,8 @@ package activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -13,8 +15,13 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.myappp.R;
 
-public class MainActivity extends AppCompatActivity {
+import db.HabitDao;
+import db.HabitDataBase;
 
+public class MainActivity extends AppCompatActivity {
+    private ProgressBar progressOval;
+    private TextView progressText;
+    private HabitDao habitDao;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +55,48 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, HabitListActivity.class);
             startActivity(intent);
         });
+        progressOval = findViewById(R.id.progress_oval);
+        progressText = findViewById(R.id.progress_text);
+        habitDao = HabitDataBase.getInstance(this).habitDao();
+
+        updateProgress();
     }
+    private void updateProgress() {
+        new Thread(() -> {
+            long today = HabitListActivity.getCurrentDateAsLong();
+            int totalHabits = habitDao.getTotalHabitsCount();
+            int completedHabits = habitDao.getCompletedHabitsCountForDate(today);
+
+            int percent = (totalHabits == 0) ? 0 : (completedHabits * 100) / totalHabits;
+
+            runOnUiThread(() -> {
+                progressOval.setProgress(percent);
+                progressText.setText(percent + "%");
+                updateCharacterEmotion(percent); // Опционально: меняем эмоцию персонажа
+            });
+        }).start();
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateProgress();
+    }
+
+    private void updateCharacterEmotion(int percent) {
+        ImageView characterImage = findViewById(R.id.myImageView);
+        if (percent < 30) {
+            characterImage.setImageResource(R.drawable.sad);
+        } else if (percent < 60) {
+            characterImage.setImageResource(R.drawable.angry);
+        } else if (percent < 100){
+            characterImage.setImageResource(R.drawable.norm);
+        }
+        else {
+            characterImage.setImageResource(R.drawable.complete);
+        }
+
+    }
+
 
     /**Метод для проверки, зарегистрирован ли пользователь*/
     private boolean isUserRegistered() {
