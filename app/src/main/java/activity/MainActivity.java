@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
             runOnUiThread(() -> {
                 progressOval.setProgress(percent);
                 progressText.setText(percent + "%");
-                updateCharacterEmotion(percent); // Опционально: меняем эмоцию персонажа
+                updateCharacterEmotion(percent);
             });
         }).start();
     }

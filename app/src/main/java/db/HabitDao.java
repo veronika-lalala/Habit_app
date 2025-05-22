@@ -18,7 +18,6 @@ public interface HabitDao {
     List<Habit> getAllHabits();
     @Delete
     void deleteHabit(Habit habit);
-
     @Query("UPDATE " + HabitContract.TABLE_NAME + " SET " + HabitContract.Columns.ISCOMPLETED + " = 0")
     void resetAllHabitsCompletion();
     @Query("SELECT COUNT(*) FROM habits")

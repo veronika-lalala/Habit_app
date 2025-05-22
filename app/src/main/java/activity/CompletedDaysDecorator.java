@@ -31,7 +31,7 @@ public class CompletedDaysDecorator implements DayViewDecorator {
             CalendarDay calendarDay = CalendarDay.from(year, month, day);
             this.dates.add(calendarDay);
             Log.v("DE", String.format("Добавлена дата: %04d-%02d-%02d (long: %d) -> %s",
-                    year, month + 1, day, date, calendarDay));
+                    year, month, day, date, calendarDay));
         }
     }
 

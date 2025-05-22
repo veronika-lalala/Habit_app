@@ -23,7 +23,6 @@ public class RegistrationActivity extends AppCompatActivity {
         editTextUsername = findViewById(R.id.editText_username);
         Button buttonRegister = findViewById(R.id.button_register);
 
-        // Установка обработчика нажатия на кнопку регистрации
         buttonRegister.setOnClickListener(v -> {
             String username = editTextUsername.getText().toString();
 
@@ -32,10 +31,9 @@ public class RegistrationActivity extends AppCompatActivity {
             } else {
                 saveUserCredentials(username);
 
-                // Переход к MainActivity после успешной регистрации
                 Intent intent = new Intent(RegistrationActivity.this, MainActivity.class);
                 startActivity(intent);
-                finish(); // Закрытие текущей активности
+                finish();
             }
         });
     }

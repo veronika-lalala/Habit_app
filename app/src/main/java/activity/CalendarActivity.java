@@ -5,6 +5,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myappp.R;
@@ -17,16 +19,19 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import db.DayHabit;
 import db.DayHabitDao;
+import db.Habit;
+import db.HabitDao;
 import db.HabitDataBase;
 
 public class CalendarActivity extends AppCompatActivity {
 
-    private TextView selectedDateTextView;
     private MaterialCalendarView materialCalendarView;
     private DayHabitDao dayHabitDao;
+    private HabitDao habitDao;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("CL", "Calendar activity create");
@@ -35,15 +40,48 @@ public class CalendarActivity extends AppCompatActivity {
         dayHabitDao = HabitDataBase.getInstance(this).dayHabitDao();
 
 
-//        selectedDateTextView = findViewById(R.id.selectedDateTextView);
         materialCalendarView = findViewById(R.id.materialCalendarView);
-        materialCalendarView.setSelectionMode(MaterialCalendarView.SELECTION_MODE_NONE);
-
-//        materialCalendarView.setOnDateChangedListener((widget, date, selected) -> {
-//            String selectedDate = "Выбранная дата: " + date.getDay() + "/" + (date.getMonth() + 1) + "/" + date.getYear();
-//            selectedDateTextView.setText(selectedDate);
-//        });
+        materialCalendarView.setSelectionMode(MaterialCalendarView.SELECTION_MODE_SINGLE);
+        materialCalendarView.setOnDateChangedListener((widget, date, selected) -> {
+            long selectedDate = date.getYear() * 10000L + (date.getMonth()) * 100L + date.getDay();
+            showCompletedHabitsForDate(selectedDate);
+        });
         loadCompletedDates();
+    }
+    private void showCompletedHabitsForDate(long date) {
+        new Thread(() -> {
+            List<Long> habitIds = dayHabitDao.getHabitsCompletedOnDate(date);
+            habitDao =HabitDataBase.getInstance(this).habitDao();
+            List<Habit> habits = habitDao.getAllHabits()
+                    .stream()
+                    .filter(habit -> habitIds.contains(habit.getId()))
+                    .collect(Collectors.toList());
+            Log.d("SH", "Найдено дат: " + habits.size());
+
+            runOnUiThread(() -> {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Выполненные привычки на " + formatDate(date));
+
+                if (habits.isEmpty()) {
+                    builder.setMessage("В этот день не было выполнено ни одной привычки");
+                } else {
+                    String habitsText = habits.stream()
+                            .map(Habit::getName)
+                            .collect(Collectors.joining("\n"));
+                    builder.setMessage(habitsText);
+                }
+
+                builder.setPositiveButton("OK", null);
+                builder.show();
+            });
+        }).start();
+    }
+
+    private String formatDate(long date) {
+        int year = (int)(date / 10000);
+        int month = (int)((date % 10000) / 100);
+        int day = (int)(date % 100);
+        return String.format("%02d.%02d.%04d", day, month, year);
     }
     private void loadCompletedDates() {
         Executor executor = Executors.newSingleThreadExecutor();
